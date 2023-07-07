@@ -1,0 +1,11 @@
+sudo apt update
+
+sudo apt install -Y  libc++-dev
+
+sudo apt-get install -y libunwind-dev
+
+
+
+npm install
+
+npm run dev

@@ -1,21 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-            integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"
-        />
-        <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
-        <link rel="stylesheet" href="./style.css" />
-        <title>Get Link</title>
-    </head>
-    <body>
-        <div class="container">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="./style.css" />
+    <title>Get Link</title>
+</head>
+
+<body>
+    <!-- <div class="container">
             <h1>Get Link Terabox</h1>
             <div class="form-group">
                 <label for="input-url">Enter URL:</label>
@@ -27,91 +25,156 @@
             <div class="output">
                 <div class="tree-view"></div>
             </div>
-        </div>
+        </div> -->
 
-        <script
-            src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"
-            integrity="sha512-fD9DI5bZwQxOi7MhYWnnNPlvXdp/2Pj3XSTRrFs5FQa4mizyGLnJcN6tuvUS6LbmgN1ut+XGSABKvjN0H6Aoow=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"
-        ></script>
-        <script src="./script.js"></script>
-        <script>
-            function fetchDownload({ shareid, uk, sign, timestamp, fs_id }) {
-                return fetch("/api/get-download", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ shareid, uk, sign, timestamp, fs_id }),
-                }).then(async function (res) {
-                    return await res.json()
-                })
-            }
+    <!-- // make a text bbox where the user can enter the multi-line text and then click on the button to generate the link
 
-            function fetchInfo(shortUrl){
-                return fetch("/api/get-info?shorturl=" + shortUrl).then(async function (res) {
-                        const body = await res.json()
+        // the text will contain the links of the terabox and then the user will click on the button to generate the link and then the user will be able to download the file -->
+    <!--
+        // there will also be a option of the download all button which will download all the files -->
 
-                        if (!body.ok) return alert(body.message)
 
-                        // handle Info
-                        function recursiveList(list) {
-                            return list.map((item) => ({
-                                isDir: item.is_dir != 0,
-                                name: item.filename,
-                                category: item.is_dir != 0 || parseInt(item.category),
-                                size: item.is_dir != 0 || formatStorageSize(parseInt(item.size)),
-                                children:
-                                    item.children && item.children.length > 0
-                                        ? recursiveList(item.children)
-                                        : undefined,
-                                downloadAction:
-                                    item.is_dir != 0 ||
-                                    async function () {
-                                        const res = await fetchDownload({
-                                            shareid: body.shareid,
-                                            uk: body.uk,
-                                            sign: body.sign,
-                                            timestamp: body.timestamp,
-                                            fs_id: item.fs_id,
-                                        })
+    <h1>multi-line text box</h1>
 
-                                        if (!res.ok) return alert(res.message)
+    <textarea class="text-area" name="text-area" id="text-area" cols="30" rows="10"></textarea>
 
-                                        window.open(res.downloadLink, '_blank')
-                                    },
-                            }))
-                        }
+    <button id="get-links-button">Get Links </button>
 
-                        return recursiveList(body.list)
-                    })
+    <div class="output">
+        <div class="tree-view"></div>
 
-            }
+        <button id="download-all-button">Download All</button>
 
-            const getLinkButton = document.getElementById("get-link-button")
-            const inputUrl = document.getElementById("input-url")
-            const treeViewElement = document.querySelector(".tree-view")
+    </div>
 
-            getLinkButton.addEventListener("click", async function () {
-                const url = inputUrl.value
 
-                if(!url) return alert('Url must not empty!!')
 
-                const regex = /\/([A-Za-z0-9_-]+)$/
-                const match = url.match(regex)
-                if (match) {
-                    const shortUrl = match[1]
-
-                    treeViewElement.innerHTML = '<p style="text-align:center;">Loading...</p>'
-                    
-                    const d = await fetchInfo(shortUrl)
-                    
-                    treeViewElement.innerHTML = ''
-                    
-                    TreeView(d, treeViewElement)
-                } else {
-                    alert("URL not support")
-                }
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"
+        integrity="sha512-fD9DI5bZwQxOi7MhYWnnNPlvXdp/2Pj3XSTRrFs5FQa4mizyGLnJcN6tuvUS6LbmgN1ut+XGSABKvjN0H6Aoow=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="./script.js"></script>
+    <script>
+        function fetchDownload({ shareid, uk, sign, timestamp, fs_id }) {
+            return fetch("/api/get-download", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ shareid, uk, sign, timestamp, fs_id }),
+            }).then(async function (res) {
+                return await res.json()
             })
-        </script>
-    </body>
+        }
+
+        function fetchInfo(shortUrl) {
+            return fetch("/api/get-info?shorturl=" + shortUrl).then(async function (res) {
+                const body = await res.json()
+
+                if (!body.ok) return alert(body.message)
+
+                // handle Info
+                function recursiveList(list) {
+                    return list.map((item) => ({
+                        isDir: item.is_dir != 0,
+                        name: item.filename,
+                        category: item.is_dir != 0 || parseInt(item.category),
+                        size: item.is_dir != 0 || formatStorageSize(parseInt(item.size)),
+                        children:
+                            item.children && item.children.length > 0
+                                ? recursiveList(item.children)
+                                : undefined,
+                        downloadAction:
+                            item.is_dir != 0 ||
+                            async function () {
+                                const res = await fetchDownload({
+                                    shareid: body.shareid,
+                                    uk: body.uk,
+                                    sign: body.sign,
+                                    timestamp: body.timestamp,
+                                    fs_id: item.fs_id,
+                                })
+
+                                if (!res.ok) return alert(res.message)
+
+                                window.open(res.downloadLink, '_blank')
+                            },
+                    }))
+                }
+
+                return recursiveList(body.list)
+            })
+
+        }
+
+        const textArea = document.getElementById("text-area")
+
+        const getLinksButton = document.getElementById("get-links-button")
+        const treeViewElement = document.querySelector(".tree-view")
+
+        const downloadAllButton = document.getElementById("download-all-button")
+
+        async function genTree() {
+            const url = inputUrl.value
+
+            if (!url) return alert('Url must not empty!!')
+
+            const regex = /\/([A-Za-z0-9_-]+)$/
+            const match = url.match(regex)
+            if (match) {
+                const shortUrl = match[1]
+
+                treeViewElement.innerHTML = '<p style="text-align:center;">Loading...</p>'
+
+                const d = await fetchInfo(shortUrl)
+
+                treeViewElement.innerHTML = ''
+
+                TreeView(d, treeViewElement)
+            } else {
+                alert("URL not support")
+            }
+        }
+
+        async function genTreeforeach() {
+
+            // get all the links from the text area
+
+            const text = textArea.value
+
+            // extract all the links from the text
+
+            const regex = /\/([A-Za-z0-9_-]+)$/gm
+
+            const links = []
+
+            let match
+
+            while ((match = regex.exec(text))) {
+                links.push(match[1])
+            }
+
+            console.log(links)
+
+            // for each link generate the tree
+
+            for (const link of links) {
+                const shortUrl = link
+
+                treeViewElement.innerHTML = '<p style="text-align:center;">Loading...</p>'
+
+                const d = await fetchInfo(shortUrl)
+
+                treeViewElement.innerHTML = ''
+
+                TreeView(d, treeViewElement)
+            }
+
+
+
+
+
+        }
+
+        getLinkButton.addEventListener("click", genTreeforeach)
+    </script>
+</body>
+
 </html>
