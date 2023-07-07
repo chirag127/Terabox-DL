@@ -188,6 +188,8 @@
 
             const downloadButtons = document.querySelectorAll('.file-download')
 
+            console.log(downloadButtons)
+
             for (const downloadButton of downloadButtons) {
                 downloadButton.click()
             }
@@ -197,6 +199,8 @@
         }
 
         getLinksButton.addEventListener("click", genTreeforeach)
+
+        downloadAllButton.addEventListener("click", downloadAll)
     </script>
 </body>
 
