@@ -43,9 +43,9 @@
     <div class="output">
         <div class="tree-view"></div>
 
-        <button id="download-all-button">Download All</button>
 
     </div>
+    <button id="download-all-button">Download All</button>
 
 
 
@@ -107,12 +107,12 @@
         const textArea = document.getElementById("text-area")
 
         const getLinksButton = document.getElementById("get-links-button")
-        const treeViewElement = document.querySelector(".tree-view")
+        const treeElement = document.querySelector(".tree-view")
 
         const downloadAllButton = document.getElementById("download-all-button")
 
-        async function genTree() {
-            const url = inputUrl.value
+        async function genTree(url, treeViewElement) {
+
 
             if (!url) return alert('Url must not empty!!')
 
@@ -124,6 +124,8 @@
                 treeViewElement.innerHTML = '<p style="text-align:center;">Loading...</p>'
 
                 const d = await fetchInfo(shortUrl)
+
+                console.log(d)
 
                 treeViewElement.innerHTML = ''
 
@@ -139,17 +141,13 @@
 
             const text = textArea.value
 
-            // extract all the links from the text
+            // extract all the links from the text that starts with https://terabox.com/s/
 
-            const regex = /\/([A-Za-z0-9_-]+)$/gm
 
-            const links = []
+            const regex = /\bhttps?:\/\/\S+\b/g;
+            const links = text.match(regex);
 
-            let match
 
-            while ((match = regex.exec(text))) {
-                links.push(match[1])
-            }
 
             console.log(links)
 
@@ -158,16 +156,41 @@
             for (const link of links) {
                 const shortUrl = link
 
-                treeViewElement.innerHTML = '<p style="text-align:center;">Loading...</p>'
+                // check if the link is terabox link or not
 
-                const d = await fetchInfo(shortUrl)
+                if (shortUrl.includes('box') || shortUrl.includes('terabox') || shortUrl.includes('tbox') || shortUrl.includes('com/s/')) {
 
-                treeViewElement.innerHTML = ''
+                    // create a new tree view element for each link and append it to the tree element
 
-                TreeView(d, treeViewElement)
+                    const treeViewElement = document.createElement('div')
+
+                    treeViewElement.classList.add('tree-view')
+
+                    treeElement.appendChild(treeViewElement)
+
+                    // generate the tree for each link
+
+                    genTree(shortUrl, treeViewElement)
+
+                }
+
             }
 
 
+
+
+
+        }
+
+        function downloadAll() {
+
+            // it's going to click all elements with the class .file-download
+
+            const downloadButtons = document.querySelectorAll('.file-download')
+
+            for (const downloadButton of downloadButtons) {
+                downloadButton.click()
+            }
 
 
 
